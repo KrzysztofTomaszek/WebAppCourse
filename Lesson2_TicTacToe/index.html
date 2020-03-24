@@ -20,8 +20,13 @@
 	</style>
 </head>
 <body>	
-	<table id="Board"></table>
+	<label for="gameSize">Rozmiar planszy:</label>
+	<input type="number" id="gameSize" value="3" min="3" /><br><br>
+	<label for="winSize">Liczba ciągu potrzebnego do zwycięstwa:</label>
+	<input type="number" id="winSize" value="3" min="3" /><br><br> 
+	<button onclick="StartGame()">Graj!</button><br><br> 
 	<h1 id="Score"></h1>
+	<table id="Board"></table>	
 	<script type="text/javascript" src="index.js"></script>
 </body>
 </html>

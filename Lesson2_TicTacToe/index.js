@@ -1,6 +1,7 @@
 var Board = /** @class */ (function () {
-    function Board(size) {
+    function Board(size, strikeSize) {
         this.size = size;
+        this.strikeSize = strikeSize;
         this.GenerateVisualBoard();
         this.GenerateCellTabel();
         this.player = false;
@@ -51,25 +52,34 @@ var Board = /** @class */ (function () {
             this.DrawScore();
     };
     Board.prototype.CheckRow = function (row) {
+        var strike = 0;
         for (var i = 0; i < this.size; i++) {
-            if (this.cells[row][i].sign != this.player)
-                return false;
+            if (this.cells[row][i].sign == this.player)
+                strike++;
         }
-        return true;
+        if (strike >= this.strikeSize || strike >= this.size)
+            return true;
+        return false;
     };
     Board.prototype.CheckCol = function (col) {
+        var strike = 0;
         for (var i = 0; i < this.size; i++) {
-            if (this.cells[i][col].sign != this.player)
-                return false;
+            if (this.cells[i][col].sign == this.player)
+                strike++;
         }
-        return true;
+        if (strike >= this.strikeSize || strike >= this.size)
+            return true;
+        return false;
     };
     Board.prototype.CheckBevel = function () {
+        var strike = 0;
         for (var i = 0; i < this.size; i++) {
-            if (this.cells[i][i].sign != this.player)
-                return false;
+            if (this.cells[i][i].sign == this.player)
+                strike++;
         }
-        return true;
+        if (strike >= this.strikeSize || strike >= this.size)
+            return true;
+        return false;
     };
     Board.prototype.DrawScore = function () {
         if (!this.player)
@@ -98,4 +108,13 @@ var Cell = /** @class */ (function () {
     };
     return Cell;
 }());
-var board = new Board(6);
+var board;
+function StartGame() {
+    document.getElementById("Score").innerHTML = "";
+    var table = document.getElementById("Board");
+    while (table.hasChildNodes())
+        table.removeChild(table.firstChild);
+    var size = Number(document.getElementById("gameSize").value);
+    var strike = Number(document.getElementById("winSize").value);
+    board = new Board(size, strike);
+}

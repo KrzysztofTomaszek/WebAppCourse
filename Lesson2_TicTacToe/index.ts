@@ -4,10 +4,12 @@ class Board
 	scoreText: HTMLElement;
 	public cells:Cell[][];
 	size:number;
+	strikeSize:number;
 	player:boolean //Player1-X-false; Player2-O-true
-    constructor(size: number) 
+    constructor(size : number, strikeSize : number) 
     {
-       this.size =size;
+       this.size = size;
+       this.strikeSize = strikeSize;
        this.GenerateVisualBoard();    	
        this.GenerateCellTabel();
        this.player=false;
@@ -72,29 +74,35 @@ class Board
 
     CheckRow(row:number) : boolean
     {
+    	let strike:number = 0;
 		for(var i: number = 0; i< this.size; i++) 
         {
-        	if(this.cells[row][i].sign != this.player) return false;            
+        	if(this.cells[row][i].sign == this.player) strike++;            
         }
-        return true;
+        if(strike >= this.strikeSize || strike >= this.size) return true;
+        return false;
     }
 
     CheckCol(col:number) : boolean
     {
+    	let strike:number = 0;
         for(var i: number = 0; i< this.size; i++) 
         {
-        	if(this.cells[i][col].sign != this.player) return false;             
+        	if(this.cells[i][col].sign == this.player) strike++;            
         }
-        return true;        
+        if(strike >= this.strikeSize || strike >= this.size) return true;
+        return false;       
     }
 
     CheckBevel() : boolean
-    {    	
+    {    
+    	let strike:number = 0;
         for(var i: number = 0; i< this.size; i++) 
         {
-        	if(this.cells[i][i].sign != this.player) return false;           
+        	if(this.cells[i][i].sign == this.player) strike++;           
         } 
-        return true;        
+        if(strike >= this.strikeSize || strike >= this.size) return true;
+        return false;       
     }
 
     DrawScore() : void
@@ -134,4 +142,16 @@ class Cell {
     }    
 }
 
-const board:Board = new Board(6);
+let board:Board;
+
+function StartGame() :void
+{
+	document.getElementById("Score").innerHTML="";
+	var table = document.getElementById("Board");
+	while(table.hasChildNodes()) table.removeChild(table.firstChild);
+
+	let size = Number((<HTMLInputElement> document.getElementById("gameSize")).value);
+	let strike = Number((<HTMLInputElement> document.getElementById("winSize")).value);
+
+	board = new Board(size,strike);
+}
