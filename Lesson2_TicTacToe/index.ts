@@ -69,7 +69,7 @@ class Board
     	else    	
     		if(this.CheckCol(col))this.DrawScore();
     		else
-    			if(this.CheckBevel())this.DrawScore();    	   	     
+    			if(this.CheckBevel(row, col))this.DrawScore();    	   	     
     }
 
     CheckRow(row:number) : boolean
@@ -77,7 +77,8 @@ class Board
     	let strike:number = 0;
 		for(var i: number = 0; i< this.size; i++) 
         {
-        	if(this.cells[row][i].sign == this.player) strike++;            
+        	if(this.cells[row][i].sign == this.player) strike++;     
+        	else strike = 0;          
         }
         if(strike >= this.strikeSize || strike >= this.size) return true;
         return false;
@@ -88,22 +89,73 @@ class Board
     	let strike:number = 0;
         for(var i: number = 0; i< this.size; i++) 
         {
-        	if(this.cells[i][col].sign == this.player) strike++;            
+        	if(this.cells[i][col].sign == this.player) strike++;           
+        	else strike = 0;    
         }
         if(strike >= this.strikeSize || strike >= this.size) return true;
         return false;       
     }
 
-    CheckBevel() : boolean
-    {    
-    	let strike:number = 0;
-        for(var i: number = 0; i< this.size; i++) 
-        {
-        	if(this.cells[i][i].sign == this.player) strike++;           
-        } 
-        if(strike >= this.strikeSize || strike >= this.size) return true;
-        return false;       
-    }
+	CheckBevel(row:number, col:number) : boolean
+	{	 	
+	 	if(this.CheckUpperLeft(row, col, this.strikeSize)) return true;
+	 	if(this.CheckUpperRight(row, col, this.strikeSize)) return true;
+	 	if(this.CheckBottomLeft(row, col, this.strikeSize)) return true;
+	 	if(this.CheckBottomRight(row, col, this.strikeSize)) return true;
+	 	return false;  
+	} 
+
+	CheckUpperLeft(row:number, col:number, strike: number) : boolean
+	{
+		if(strike == 1) return true;
+		if(row+1<this.size && col+1<this.size)
+		{
+			if (this.cells[row][col].sign == this.cells[row+1][col+1].sign) 
+		 	{
+	 			if(this.CheckUpperLeft(row+1, col+1, strike-1)) return true;		 		
+		 	}
+		}
+		return false;
+	}
+
+	CheckUpperRight(row:number, col:number, strike: number) : boolean
+	{
+		if(strike == 1) return true;
+		if(row+1<this.size && col-1 >= 0)
+		{
+			if (this.cells[row][col].sign == this.cells[row+1][col-1].sign) 
+	 		{
+	 			if(this.CheckUpperRight(row+1, col-1, strike-1)) return true;
+	 		}
+		}
+		return false;
+	}
+
+	CheckBottomLeft(row:number, col:number, strike: number) : boolean
+	{
+		if(strike == 1) return true;
+		if(row-1 >= 0 && col+1<this.size)
+		{
+			if (this.cells[row][col].sign == this.cells[row-1][col+1].sign) 
+		 	{
+		 		if(this.CheckBottomLeft(row-1, col+1, strike-1)) return true;
+		 	}
+		}
+		return false;
+	}
+
+	CheckBottomRight(row:number, col:number, strike: number) : boolean
+	{
+		if(strike == 1) return true;
+		if(row-1 >= 0 && col-1 >= 0)
+		{
+			if (this.cells[row][col].sign == this.cells[row-1][col-1].sign) 
+		 	{
+		 		if(this.CheckBottomRight(row-1, col-1, strike-1)) return true;
+		 	}
+		}
+		return false;
+	}
 
     DrawScore() : void
     {

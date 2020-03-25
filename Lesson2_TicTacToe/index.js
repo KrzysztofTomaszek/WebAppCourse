@@ -48,7 +48,7 @@ var Board = /** @class */ (function () {
             this.DrawScore();
         else if (this.CheckCol(col))
             this.DrawScore();
-        else if (this.CheckBevel())
+        else if (this.CheckBevel(row, col))
             this.DrawScore();
     };
     Board.prototype.CheckRow = function (row) {
@@ -56,6 +56,8 @@ var Board = /** @class */ (function () {
         for (var i = 0; i < this.size; i++) {
             if (this.cells[row][i].sign == this.player)
                 strike++;
+            else
+                strike = 0;
         }
         if (strike >= this.strikeSize || strike >= this.size)
             return true;
@@ -66,19 +68,66 @@ var Board = /** @class */ (function () {
         for (var i = 0; i < this.size; i++) {
             if (this.cells[i][col].sign == this.player)
                 strike++;
+            else
+                strike = 0;
         }
         if (strike >= this.strikeSize || strike >= this.size)
             return true;
         return false;
     };
-    Board.prototype.CheckBevel = function () {
-        var strike = 0;
-        for (var i = 0; i < this.size; i++) {
-            if (this.cells[i][i].sign == this.player)
-                strike++;
-        }
-        if (strike >= this.strikeSize || strike >= this.size)
+    Board.prototype.CheckBevel = function (row, col) {
+        if (this.CheckUpperLeft(row, col, this.strikeSize))
             return true;
+        if (this.CheckUpperRight(row, col, this.strikeSize))
+            return true;
+        if (this.CheckBottomLeft(row, col, this.strikeSize))
+            return true;
+        if (this.CheckBottomRight(row, col, this.strikeSize))
+            return true;
+        return false;
+    };
+    Board.prototype.CheckUpperLeft = function (row, col, strike) {
+        if (strike == 1)
+            return true;
+        if (row + 1 < this.size && col + 1 < this.size) {
+            if (this.cells[row][col].sign == this.cells[row + 1][col + 1].sign) {
+                if (this.CheckUpperLeft(row + 1, col + 1, strike - 1))
+                    return true;
+            }
+        }
+        return false;
+    };
+    Board.prototype.CheckUpperRight = function (row, col, strike) {
+        if (strike == 1)
+            return true;
+        if (row + 1 < this.size && col - 1 >= 0) {
+            if (this.cells[row][col].sign == this.cells[row + 1][col - 1].sign) {
+                if (this.CheckUpperRight(row + 1, col - 1, strike - 1))
+                    return true;
+            }
+        }
+        return false;
+    };
+    Board.prototype.CheckBottomLeft = function (row, col, strike) {
+        if (strike == 1)
+            return true;
+        if (row - 1 >= 0 && col + 1 < this.size) {
+            if (this.cells[row][col].sign == this.cells[row - 1][col + 1].sign) {
+                if (this.CheckBottomLeft(row - 1, col + 1, strike - 1))
+                    return true;
+            }
+        }
+        return false;
+    };
+    Board.prototype.CheckBottomRight = function (row, col, strike) {
+        if (strike == 1)
+            return true;
+        if (row - 1 >= 0 && col - 1 >= 0) {
+            if (this.cells[row][col].sign == this.cells[row - 1][col - 1].sign) {
+                if (this.CheckBottomRight(row - 1, col - 1, strike - 1))
+                    return true;
+            }
+        }
         return false;
     };
     Board.prototype.DrawScore = function () {
